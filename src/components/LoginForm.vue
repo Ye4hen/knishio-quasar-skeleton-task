@@ -34,8 +34,6 @@ const loading = ref(false)
 const router = useRouter()
 
 const handleLogin = async () => {
-  console.log(email.value)
-  console.log(password.value)
   loginError.value = false
   loading.value = true
 
