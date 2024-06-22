@@ -1,29 +1,49 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title>
-          Knish.IO App Skeleton
-        </q-toolbar-title>
-
-        <div
-          v-if="dltStore.isInitialized"
-        >
-          <logout-form
-            v-if="dltStore.isLoggedIn"
+      <q-toolbar class="header-container">
+        <div class="flex items-center">
+          <q-btn
+            flat
+            dense
+            round
+            icon="menu"
+            aria-label="Menu"
+            @click="toggleLeftDrawer"
           />
-          <login-form
-            v-else
-          />
+
+          <q-toolbar-title> Knish.IO App Skeleton </q-toolbar-title>
+        </div>
+
+        <div v-if="dltStore.isInitialized" class="header-links">
+          <div v-if="dltStore.isLoggedIn" class="flex flex-wrap justify-center">
+			<q-item
+			tag="a"
+			clickable
+			href="/dashboard"
+			class="items-center"
+			>
+				Dashboard
+			</q-item>
+			<q-item
+			tag="a"
+			clickable
+			href="/task_manager"
+			class="items-center"
+			>
+				Task manager
+			</q-item>
+            <q-btn
+              flat
+              round
+              dense
+			size="1.5em"
+              icon="assignment_ind"
+			@click="toProfile"
+            />
+            <logout-form class="q-pl-md" />
+          </div>
+          <login-form v-else />
         </div>
       </q-toolbar>
     </q-header>
@@ -34,9 +54,7 @@
       bordered
     >
       <q-list>
-        <q-item-label
-          header
-        >
+        <q-item-label header>
           Essential Links
         </q-item-label>
 
@@ -49,9 +67,7 @@
     </q-drawer>
 
     <q-page-container>
-      <div
-        v-if="dltStore.isInitialized"
-      >
+      <div v-if="dltStore.isInitialized">
         <router-view />
       </div>
       <div
@@ -68,12 +84,8 @@
 </template>
 
 <script setup>
-import {
-  onMounted,
-  ref,
-  watch
-} from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted, ref, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import EssentialLink from 'components/EssentialLink.vue'
 import hasDltStore from 'src/mixins/hasDltStore'
 import { KNISHIO_SETTINGS } from 'src/libraries/constants/knishio.js'
@@ -87,6 +99,7 @@ defineOptions({
 // Use the dltStore mixin
 const { dltStore } = hasDltStore()
 const router = useRouter()
+const route = useRoute()
 const linksList = [
   {
     title: 'Knish.IO Technical Whitepaper',
@@ -112,11 +125,12 @@ const linksList = [
 watch(
   () => dltStore.isLoggedIn,
   (isLoggedIn) => {
-    if (isLoggedIn) {
+    if (!isLoggedIn) {
+      // User is not logged in, redirect to the Home page
+      router.push({ name: 'home' })
+    } else if (route.name === 'home') {
       // User is logged in, redirect to the Dashboard
       router.push({ name: 'dashboard' })
-    } else {
-      router.push({ name: 'home' })
     }
   }
 )
@@ -134,6 +148,7 @@ onMounted(async () => {
     if (dltStore.isLoggedIn) {
       // User is logged in, perform any necessary actions
       console.log(`Welcome, ${dltStore.profile.publicName}`)
+      console.log(dltStore.profile)
       // Example: Redirect to a dashboard page
       // this.$router.push('/dashboard')
     } else {
@@ -158,4 +173,28 @@ const leftDrawerOpen = ref(false)
 function toggleLeftDrawer () {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
+
+function toProfile () {
+  router.push({ name: 'profile' })
+}
 </script>
+
+<style lang="scss" scoped>
+.header{
+    &-container{
+        padding: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        @media(max-width:47.9988em){
+          flex-direction: column;
+          align-items: center;
+        }
+    }
+
+	&-links{
+		display: flex;
+		justify-content: center;
+	}
+}
+</style>

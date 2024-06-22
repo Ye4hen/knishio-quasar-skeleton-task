@@ -1,11 +1,9 @@
 <template>
   <q-page class="flex flex-center">
-    Welcome, {{ dltStore.profile.publicName }}
+    <greeting-titles secondaryTitle="Your dashboard will ready soon ;)" />
   </q-page>
 </template>
 
 <script setup>
-import hasDltStore from 'src/mixins/hasDltStore'
-
-const { dltStore } = hasDltStore()
+import GreetingTitles from '../components/ui/GreetingTitles.vue'
 </script>

@@ -42,7 +42,8 @@ const stateObj = {
   userRoles: false,
   parentApp: null,
   favoriteCards: {},
-  auth2fa: null
+  auth2fa: null,
+  tasksList: []
 }
 
 const actionsObj = {
@@ -90,6 +91,16 @@ const actionsObj = {
     }
 
     await this.authorize(newSecret)
+    // Retrieve user-specific tasksList
+    const username = await getDataPromise(db, 'username')
+    const tasksListKey = `tasksList_${username}`
+    let tasksList = await getDataPromise(db, tasksListKey)
+    if (tasksList) {
+      tasksList = JSON.parse(tasksList)
+    } else {
+      tasksList = []
+    }
+    this.tasksList = tasksList
 
     if (secret) {
       this.secret = secret
@@ -215,6 +226,7 @@ const actionsObj = {
     this.userRoles = true
     this.profile = {}
     this.auth2fa = null
+    this.tasksList = []
 
     await deleteDataPromise(db, 'username')
     await deleteDataPromise(db, 'secret')
@@ -388,6 +400,106 @@ const actionsObj = {
 
     await this.logout()
     throw new BaseException(response.error_message)
+  },
+
+  /**
+	 * Update user's profile.
+	 * @param {Object} updateInfo - Updated properties options.
+	 * @returns {Promise<boolean>} - True if the update is successful, false otherwise.
+	 */
+  async updateProfile (updateInfo) {
+    console.log('DLT::updateProfile() - Starting profile update...')
+
+    if (!this.client) {
+      console.error('DLT::updateProfile() - No Knish.IO client available!')
+      return false
+    }
+
+    const { publicName, avatar } = updateInfo
+
+    if (!publicName) {
+      console.error('DLT::updateProfile() - Username and public name are required!')
+      return false
+    }
+
+    try {
+      this.profile.publicName = publicName
+      this.profile.avatar = avatar
+
+      const saveParams = {
+        metaData: {
+          publicName,
+          avatar,
+          appSlug: KNISHIO_SETTINGS.cellSlug
+        },
+        metaId: this.bundle
+      }
+
+      console.log('DLT::updateProfile() - saveParams:', saveParams)
+
+      if (!saveParams.metaData || !saveParams.metaId) {
+        throw new Error('saveParams is not properly formed')
+      }
+
+      // Save the updated metadata to the ledger
+      const bundle = new WalletBundle({})
+      const response = await bundle.save(this.client, saveParams)
+      console.log('DLT::updateProfile() - response:', response)
+
+      if (response.error < 1) {
+        console.log('DLT::updateProfile() - Profile updated successfully')
+        return true
+      } else {
+        console.error('DLT::updateProfile() - Error updating profile')
+        console.error(response.error_message)
+        return false
+      }
+    } catch (error) {
+      console.error('DLT::updateProfile() - Error:', error)
+      return false
+    }
+  },
+
+  //   Reusable code for the methods with tasks
+  async taskMethod () {
+    try {
+      const tasksListKey = `tasksList_${this.username}`
+      const jsonArray = JSON.stringify(this.tasksList)
+      await setDataPromise(db, tasksListKey, jsonArray)
+    } catch (error) {
+      console.error('DLT::taskMethod - Error:', error)
+      return false
+    }
+  },
+
+  /**
+	 * Adds a task to the tasksList.
+	 * @param {Object} task - The task to add.
+	 * @returns {Promise<boolean>} - True if the task is added successfully, false otherwise.
+	 */
+  async addTask (task) {
+    try {
+      this.tasksList.push(task)
+      return await this.taskMethod()
+    } catch (error) {
+      console.error('DLT::addTask - Error:', error)
+      return false
+    }
+  },
+
+  /**
+	 * Adds a task to the tasksList.
+	 * @param {Number} taskIndex - The index of the task to delete.
+	 * @returns {Promise<boolean>} - True if the task is deleted successfully, false otherwise.
+	 */
+  async deleteTask (taskIndex) {
+    try {
+      this.tasksList = this.tasksList.filter((_, index) => index !== taskIndex)
+      return await this.taskMethod()
+    } catch (error) {
+      console.error('DLT::deleteTask - Error:', error)
+      return false
+    }
   },
 
   /**
