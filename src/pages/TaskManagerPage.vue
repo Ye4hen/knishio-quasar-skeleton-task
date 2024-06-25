@@ -1,24 +1,30 @@
 <template>
 	<q-page class="column items-center">
-		<greeting-titles secondaryTitle="Feel free to use your own Task Manager😘" />
-		<FormComp
-		:formClasses="'flex items-center gap-2'"
-		:formError="todoError"
-		:isDefaultInput="true"
-		inputLabel="Write the task down"
-		v-model:inputVal="inputVal"
-		buttonTitle="Add"
-		:onAction="addTask"
-		:loading="loading"
-		></FormComp>
-		<ListComp
-		v-if="dltStore.tasksList.length"
-		:listArray="dltStore.tasksList"
-		:isIndexKey="true"
-		:isListOrdered="true"
-		:isDeleteBtn="true"
-		deleteBtn="Delete"
-		></ListComp>
+		<section class="q-py-xxl column items-center">
+			<greeting-titles :isMainTitle="true" secondaryTitle="Feel free to use your own Task Manager😘" />
+			<FormComp
+			:formClasses="'flex items-center gap-2 q-pb-md'"
+			:formError="todoError"
+			:isDefaultInput="true"
+			inputLabel="Write the task down"
+			v-model:inputVal="inputVal"
+			buttonTitle="Add"
+			:onAction="addTask"
+			:loading="loading"
+			></FormComp>
+			<ListComp
+			v-if="dltStore.tasksList?.length"
+			:listArray="dltStore.tasksList"
+			:isIndexKey="true"
+			:isListOrdered="true"
+			:isDeleteBtn="true"
+			:deleteMethod="dltStore.deleteTask"
+			deleteBtn="Delete"
+			></ListComp>
+		</section>
+		<section class="q-py-xxl">
+			<diary-comp class="column items-center"/>
+		</section>
 	</q-page>
 </template>
 
@@ -26,6 +32,7 @@
 import GreetingTitles from '../components/ui/GreetingTitles.vue'
 import FormComp from '../components/ui/FormComp.vue'
 import ListComp from '../components/ui/ListComp.vue'
+import DiaryComp from '../components/DiaryComp.vue'
 import { ref, watch } from 'vue'
 import hasDltStore from 'src/mixins/hasDltStore'
 

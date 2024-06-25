@@ -1,3 +1,7 @@
 .dynamic-max-width-500px {
-max-width: 500px;
+max-width: 31.25rem;
+}
+
+.q-py-xxl{
+	padding: clamp(1.563rem, 1.139rem + 2.12vw, 3.125rem) 0; // 50px --> 25px 1500px --> 320px
 }

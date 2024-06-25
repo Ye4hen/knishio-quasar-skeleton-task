@@ -4,88 +4,93 @@
     @submit.prevent="onAction"
     :class="formClassesComputed"
   >
-    <div class="public-username-field q-mb-md" v-if="props.isRandomName">
-      <q-input
-        v-model="publicName"
-        label="Public Username"
-        outlined
-        dense
-        :disable="true"
-      />
-      <q-btn
-        icon="refresh"
-        @click="generatePublicName"
-      />
-    </div>
+    <div :class="customInputsClasses">
+        <div class="public-username-field q-mb-md" v-if="props.isRandomName">
+          <q-input
+            v-model="publicName"
+            label="Public Username"
+            outlined
+            dense
+            :disable="true"
+          />
+          <q-btn
+            icon="refresh"
+            @click="generatePublicName"
+          />
+        </div>
 
-    <q-input
-	:class="{'login-input' : props.isLogin}"
-      v-if="props.isEmail"
-      v-model="email"
-      type="email"
-      label="Email"
-      :rules="emailRules"
-      lazy-rules
-      outlined
-      dense
-      :disable="props.loading"
-      @keyup.enter = "onAction"
-    />
-
-    <div v-if="props.isPassword">
-      <q-input
+        <q-input
         :class="{'login-input' : props.isLogin}"
-        v-model="password"
-        type="password"
-        label="Password"
-        :rules="passwordRules"
-        lazy-rules
-        outlined
-        dense
-        :disable="props.loading"
-      @keyup.enter = "onAction"
-      />
-      <q-list v-if="!props.isLogin" class="password-criteria" dense>
-        <q-item v-for="(criterion, index) in passwordCriteria" :key="index">
-          <q-item-section avatar>
-            <q-icon :name="criterion.met ? 'check' : 'close'" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label caption>{{ criterion.text }}</q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
+          v-if="props.isEmail"
+          v-model="email"
+          type="email"
+          label="Email"
+          :rules="emailRules"
+          lazy-rules
+          outlined
+          dense
+          :disable="props.loading"
+          @keyup.enter = "onAction"
+        />
 
-      <q-linear-progress :value="passwordStrength" />
+        <div v-if="props.isPassword">
+          <q-input
+            :class="{'login-input' : props.isLogin}"
+            v-model="password"
+            type="password"
+            label="Password"
+            :rules="passwordRules"
+            lazy-rules
+            outlined
+            dense
+            :disable="props.loading"
+          @keyup.enter = "onAction"
+          />
+          <q-list v-if="!props.isLogin" class="password-criteria" dense>
+            <q-item v-for="(criterion, index) in passwordCriteria" :key="index">
+              <q-item-section avatar>
+                <q-icon :name="criterion.met ? 'check' : 'close'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label caption>{{ criterion.text }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+
+          <q-linear-progress :value="passwordStrength" />
+        </div>
+
+        <q-input
+          v-if="props.isPublicName"
+          filled
+          v-model="dltStore.profile.publicName"
+          label="Your public name *"
+          hint="The name which was chosen during registration"
+          lazy-rules
+          :rules="[val => val && val.length > 0 || 'Please type something']"
+          :disable="props.loading"
+          @keyup.enter = "onAction"
+        />
+
+        <q-input
+            v-if="props.isDefaultInput"
+            v-model.trim="inputVal"
+            :label="inputLabel"
+            outlined
+            dense
+            :disable="props.loading"
+            @keyup.enter = "onAction"
+          />
+
+        <slot name="additionalForms"></slot>
     </div>
-
-    <q-input
-      v-if="props.isPublicName"
-      filled
-      v-model="dltStore.profile.publicName"
-      label="Your public name *"
-      hint="The name which was chosen during registration"
-      lazy-rules
-      :rules="[val => val && val.length > 0 || 'Please type something']"
-      :disable="props.loading"
-      @keyup.enter = "onAction"
-    />
-
-	<q-input
-		v-if="props.isDefaultInput"
-        v-model.trim="inputVal"
-        :label="inputLabel"
-        outlined
-        dense
-        :disable="props.loading"
-		@keyup.enter = "onAction"
-      />
 
     <div :class="{'text-center q-mt-md' : isRegister}">
       <q-btn
         type="submit"
         color="white"
         text-color="primary"
+		:class="btnClass"
         :label="props.loading ? '...loading' : buttonTitle"
         :disabled="!isFormValid || props.formError || props.loading"
       />
@@ -115,6 +120,8 @@ const props = defineProps({
     type: String,
     required: true
   },
+  customInputsClasses: String,
+  btnClass: String,
   formError: Boolean,
   onAction: {
     type: Function || Promise,

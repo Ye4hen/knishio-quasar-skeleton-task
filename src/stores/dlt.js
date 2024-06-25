@@ -43,7 +43,8 @@ const stateObj = {
   parentApp: null,
   favoriteCards: {},
   auth2fa: null,
-  tasksList: []
+  tasksList: [],
+  diaryList: []
 }
 
 const actionsObj = {
@@ -101,6 +102,15 @@ const actionsObj = {
       tasksList = []
     }
     this.tasksList = tasksList
+
+    const diaryListKey = `diaryList_${username}`
+    let diaryList = await getDataPromise(db, diaryListKey)
+    if (diaryList) {
+      diaryList = JSON.parse(diaryList)
+    } else {
+      diaryList = []
+    }
+    this.diaryList = diaryList
 
     if (secret) {
       this.secret = secret
@@ -227,6 +237,7 @@ const actionsObj = {
     this.profile = {}
     this.auth2fa = null
     this.tasksList = []
+    this.diaryList = []
 
     await deleteDataPromise(db, 'username')
     await deleteDataPromise(db, 'secret')
@@ -496,6 +507,48 @@ const actionsObj = {
     try {
       this.tasksList = this.tasksList.filter((_, index) => index !== taskIndex)
       return await this.taskMethod()
+    } catch (error) {
+      console.error('DLT::deleteTask - Error:', error)
+      return false
+    }
+  },
+
+  //   Reusable code for the methods with diary
+  async diaryMethod () {
+    try {
+      const diaryListKey = `diaryList_${this.username}`
+      const jsonArray = JSON.stringify(this.diaryList)
+      await setDataPromise(db, diaryListKey, jsonArray)
+    } catch (error) {
+      console.error('DLT::diaryMethod - Error:', error)
+      return false
+    }
+  },
+
+  /**
+	 * Adds a task to the diaryList.
+	 * @param {Object} task - The task to add.
+	 * @returns {Promise<boolean>} - True if the task is added successfully, false otherwise.
+	 */
+  async addDiaryTask (task) {
+    try {
+      this.diaryList.push(task)
+      return await this.diaryMethod()
+    } catch (error) {
+      console.error('DLT::addDiaryTask - Error:', error)
+      return false
+    }
+  },
+
+  /**
+	 * Adds a task to the diaryList.
+	 * @param {Number} taskIndex - The index of the task to delete.
+	 * @returns {Promise<boolean>} - True if the task is deleted successfully, false otherwise.
+	 */
+  async deleteDiaryTask (taskIndex) {
+    try {
+      this.diaryList = this.diaryList.filter((_, index) => index !== taskIndex)
+      return await this.diaryMethod()
     } catch (error) {
       console.error('DLT::deleteTask - Error:', error)
       return false

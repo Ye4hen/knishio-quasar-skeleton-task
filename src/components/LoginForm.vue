@@ -1,6 +1,7 @@
 <template>
 <FormComp
     :formClasses="'row q-col-gutter-sm flex-center'"
+    :customInputsClasses="'row q-col-gutter-sm flex-center'"
     :formError="loginError"
     v-model:email="email"
     v-model:password="password"
@@ -34,8 +35,6 @@ const loading = ref(false)
 const router = useRouter()
 
 const handleLogin = async () => {
-  console.log(email.value)
-  console.log(password.value)
   loginError.value = false
   loading.value = true
 

@@ -66,7 +66,7 @@
       </q-list>
     </q-drawer>
 
-    <q-page-container>
+    <q-page-container class="q-px-md">
       <div v-if="dltStore.isInitialized">
         <router-view />
       </div>
@@ -148,7 +148,6 @@ onMounted(async () => {
     if (dltStore.isLoggedIn) {
       // User is logged in, perform any necessary actions
       console.log(`Welcome, ${dltStore.profile.publicName}`)
-      console.log(dltStore.profile)
       // Example: Redirect to a dashboard page
       // this.$router.push('/dashboard')
     } else {
