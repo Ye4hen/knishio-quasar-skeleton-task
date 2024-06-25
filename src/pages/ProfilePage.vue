@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex justify-center">
-    <greeting-titles secondaryTitle="It is your profile page" />
+    <greeting-titles :isMainTitle="true" secondaryTitle="It is your profile page" />
 	<edit-profile-form/>
   </q-page>
 </template>

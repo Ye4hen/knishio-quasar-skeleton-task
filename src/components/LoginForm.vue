@@ -1,6 +1,7 @@
 <template>
 <FormComp
     :formClasses="'row q-col-gutter-sm flex-center'"
+    :customInputsClasses="'row q-col-gutter-sm flex-center'"
     :formError="loginError"
     v-model:email="email"
     v-model:password="password"

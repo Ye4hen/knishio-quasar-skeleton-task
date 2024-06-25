@@ -66,7 +66,7 @@
       </q-list>
     </q-drawer>
 
-    <q-page-container>
+    <q-page-container class="q-px-md">
       <div v-if="dltStore.isInitialized">
         <router-view />
       </div>
