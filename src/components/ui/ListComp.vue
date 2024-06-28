@@ -18,7 +18,7 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import hasDltStore from 'src/mixins/hasDltStore'
+// import hasDltStore from 'src/mixins/hasDltStore'
 import { useQuasar } from 'quasar'
 // const { dltStore } = hasDltStore()
 const $q = useQuasar()
