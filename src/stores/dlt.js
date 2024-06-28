@@ -471,16 +471,84 @@ const actionsObj = {
     }
   },
 
-  //   Reusable code for the methods with tasks
-  async taskMethod () {
+  /**
+ * Generic method to save the given list (tasks or diary) to the database and ledger.
+ * @param {Array} list - The list to be saved (tasks or diary).
+ * @param {string} listKey - The key under which the list is stored in the database.
+ * @param {string} metaDataKey - The key under which the list is stored in the ledger metadata.
+ * @returns {Promise<boolean>} - True if the list is updated successfully, false otherwise.
+ */
+  async saveListToLedger (list, listKey, metaDataKey) {
     try {
-      const tasksListKey = `tasksList_${this.username}`
-      const jsonArray = JSON.stringify(this.tasksList)
-      await setDataPromise(db, tasksListKey, jsonArray)
+      const jsonArray = JSON.stringify(list)
+      await setDataPromise(db, listKey, jsonArray)
+      const publicName = this.profile.publicName
+      const avatar = this.profile.avatar
+
+      const saveParams = {
+        metaData: {
+          publicName,
+          avatar,
+          [metaDataKey]: jsonArray,
+          appSlug: KNISHIO_SETTINGS.cellSlug
+        },
+        metaId: this.bundle
+      }
+
+      const bundle = new WalletBundle({})
+      const response = await bundle.save(this.client, saveParams)
+      if (response.error < 1) {
+        console.log(`DLT::saveListToLedger - ${metaDataKey} updated successfully`)
+        return true
+      } else {
+        console.error(`DLT::saveListToLedger - Error updating ${metaDataKey}`)
+        console.error(response.error_message)
+        return false
+      }
     } catch (error) {
-      console.error('DLT::taskMethod - Error:', error)
+      console.error('DLT::saveListToLedger - Error:', error)
       return false
     }
+  },
+
+  /**
+ * Adds an item to the specified list and updates the ledger.
+ * @param {Array} list - The list to add the item to (tasks or diary).
+ * @param {Object} item - The item to add to the list.
+ * @param {Function} saveMethod - The method to save the list to the ledger.
+ * @returns {Promise<boolean>} - True if the item is added successfully, false otherwise.
+ */
+  async addItemToList (list, item, saveMethod) {
+    try {
+      list.push(item)
+      return await saveMethod()
+    } catch (error) {
+      console.error('DLT::addItemToList - Error:', error)
+      return false
+    }
+  },
+
+  /**
+ * Deletes an item from the specified list and updates the ledger.
+ * @param {Array} list - The list to delete the item from (tasks or diary).
+ * @param {Number} index - The index of the item to delete.
+ * @param {Function} saveMethod - The method to save the list to the ledger.
+ * @returns {Promise<boolean>} - True if the item is deleted successfully, false otherwise.
+ */
+  async deleteItemFromList (list, index, saveMethod) {
+    try {
+      list.splice(index, 1)
+      return await saveMethod()
+    } catch (error) {
+      console.error('DLT::deleteItemFromList - Error:', error)
+      return false
+    }
+  },
+
+  //   Reusable code for the methods with tasks
+  async taskMethod () {
+    const tasksListKey = `tasksList_${this.username}`
+    return await this.saveListToLedger(this.tasksList, tasksListKey, 'tasksList')
   },
 
   /**
@@ -489,70 +557,40 @@ const actionsObj = {
 	 * @returns {Promise<boolean>} - True if the task is added successfully, false otherwise.
 	 */
   async addTask (task) {
-    try {
-      this.tasksList.push(task)
-      return await this.taskMethod()
-    } catch (error) {
-      console.error('DLT::addTask - Error:', error)
-      return false
-    }
+    return this.addItemToList(this.tasksList, task, this.taskMethod)
   },
 
   /**
-	 * Adds a task to the tasksList.
+	 * Deletes a task from the tasksList.
 	 * @param {Number} taskIndex - The index of the task to delete.
 	 * @returns {Promise<boolean>} - True if the task is deleted successfully, false otherwise.
 	 */
   async deleteTask (taskIndex) {
-    try {
-      this.tasksList = this.tasksList.filter((_, index) => index !== taskIndex)
-      return await this.taskMethod()
-    } catch (error) {
-      console.error('DLT::deleteTask - Error:', error)
-      return false
-    }
+    return this.deleteItemFromList(this.tasksList, taskIndex, this.taskMethod)
   },
 
   //   Reusable code for the methods with diary
   async diaryMethod () {
-    try {
-      const diaryListKey = `diaryList_${this.username}`
-      const jsonArray = JSON.stringify(this.diaryList)
-      await setDataPromise(db, diaryListKey, jsonArray)
-    } catch (error) {
-      console.error('DLT::diaryMethod - Error:', error)
-      return false
-    }
+    const diaryListKey = `diaryList_${this.username}`
+    return await this.saveListToLedger(this.diaryList, diaryListKey, 'diaryList')
   },
 
   /**
-	 * Adds a task to the diaryList.
-	 * @param {Object} task - The task to add.
-	 * @returns {Promise<boolean>} - True if the task is added successfully, false otherwise.
+	 * Adds a diary to the diaryList.
+	 * @param {Object} diary - The diary to add.
+	 * @returns {Promise<boolean>} - True if the diary is added successfully, false otherwise.
 	 */
-  async addDiaryTask (task) {
-    try {
-      this.diaryList.push(task)
-      return await this.diaryMethod()
-    } catch (error) {
-      console.error('DLT::addDiaryTask - Error:', error)
-      return false
-    }
+  async addDiaryTask (diary) {
+    return this.addItemToList(this.diaryList, diary, this.diaryMethod)
   },
 
   /**
-	 * Adds a task to the diaryList.
-	 * @param {Number} taskIndex - The index of the task to delete.
-	 * @returns {Promise<boolean>} - True if the task is deleted successfully, false otherwise.
+	 * Deletes a diary from the diaryList.
+	 * @param {Number} diaryIndex - The index of the diary to delete.
+	 * @returns {Promise<boolean>} - True if the diary is deleted successfully, false otherwise.
 	 */
-  async deleteDiaryTask (taskIndex) {
-    try {
-      this.diaryList = this.diaryList.filter((_, index) => index !== taskIndex)
-      return await this.diaryMethod()
-    } catch (error) {
-      console.error('DLT::deleteTask - Error:', error)
-      return false
-    }
+  async deleteDiaryTask (diaryIndex) {
+    return this.deleteItemFromList(this.diaryList, diaryIndex, this.diaryMethod)
   },
 
   /**

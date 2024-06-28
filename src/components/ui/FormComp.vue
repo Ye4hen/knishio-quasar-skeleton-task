@@ -113,7 +113,6 @@ const props = defineProps({
   email: String,
   password: String,
   inputVal: String,
-  user: Object,
   buttonTitle: String,
   inputLabel: String,
   formClasses: {

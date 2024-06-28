@@ -3,7 +3,7 @@
 	<listTag>
     <li v-for="(item, index) in listArray" :key="isIndexKey ? index : item" class="q-mb-md">
       <q-card>
-        <q-card-section :class="!multipleKeys ? 'flex' : 'column'">
+        <q-card-section :class="!multipleKeys ? 'flex justify-between' : 'column'">
           <template v-if="multipleKeys">
             <div v-for="(val, key, subIndex) in item" :key="isIndexKey ? subIndex : item">
               <slot name="itemSlot" :key="key" :value="val"></slot>
@@ -15,7 +15,7 @@
           <q-btn
             v-if="isDeleteBtn"
             type="button"
-            :label="loading ? '...loading' : deleteBtn"
+            :label="deleteBtn"
             size="0.9375rem"
             padding="2.5px 10px"
             class="q-ml-sm"
@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 // import hasDltStore from 'src/mixins/hasDltStore'
 import { useQuasar } from 'quasar'
 // const { dltStore } = hasDltStore()
@@ -63,7 +63,7 @@ function processListArray () {
     })
   }
 }
-watch(props.listArray, processListArray(), { immediate: true })
+watchEffect(props.listArray, processListArray())
 
 const listTag = computed(() => {
   return props.isListOrdered ? 'ol' : 'ul'
@@ -81,7 +81,7 @@ const showNotification = (state, message) => {
     message,
     color: state === 'error' ? 'negative' : 'positive',
     position: 'top',
-    timeout: 3000
+    timeout: 1000
   })
 }
 
