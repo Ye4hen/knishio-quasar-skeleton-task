@@ -49,9 +49,9 @@ const stateObj = {
 
 const actionsObj = {
   /**
-   * Connects to the Knish.IO servers.
-   * @param {string[]} endpointUris - Array of endpoint URIs.
-   */
+	 * Connects to the Knish.IO servers.
+	 * @param {string[]} endpointUris - Array of endpoint URIs.
+	 */
   async connect (endpointUris) {
     const validServers = await this.testEndpointUris(endpointUris)
 
@@ -70,9 +70,9 @@ const actionsObj = {
   },
 
   /**
-   * Initializes the user session.
-   * @param {string|null} [newSecret=null] - New user secret.
-   */
+	 * Initializes the user session.
+	 * @param {string|null} [newSecret=null] - New user secret.
+	 */
   async init (newSecret = null) {
     console.groupCollapsed('DLT::init() - Initializing User...')
     console.info('DLT::init() - Beginning bootstrap procedure...')
@@ -133,13 +133,13 @@ const actionsObj = {
   },
 
   /**
-   * Verifies the user's login credentials.
-   * @param {Object} options - Login options.
-   * @param {string|null} [options.username=null] - Username.
-   * @param {string|null} [options.password=null] - Password.
-   * @param {string|null} [options.secret=null] - User secret.
-   * @returns {Promise<boolean>} - True if login is verified, false otherwise.
-   */
+	 * Verifies the user's login credentials.
+	 * @param {Object} options - Login options.
+	 * @param {string|null} [options.username=null] - Username.
+	 * @param {string|null} [options.password=null] - Password.
+	 * @param {string|null} [options.secret=null] - User secret.
+	 * @returns {Promise<boolean>} - True if login is verified, false otherwise.
+	 */
   async verifyLogin ({
     username = null,
     password = null,
@@ -165,14 +165,14 @@ const actionsObj = {
   },
 
   /**
-   * Logs in the user.
-   * @param {Object} options - Login options.
-   * @param {string|null} [options.username=null] - Username.
-   * @param {string|null} [options.password=null] - Password.
-   * @param {string|null} [options.secret=null] - User secret.
-   * @param {string|null} [options.auth2fa=null] - Two-factor authentication code.
-   * @returns {Promise<boolean|string>} - True if login is successful, false or 2FA code if login fails.
-   */
+	 * Logs in the user.
+	 * @param {Object} options - Login options.
+	 * @param {string|null} [options.username=null] - Username.
+	 * @param {string|null} [options.password=null] - Password.
+	 * @param {string|null} [options.secret=null] - User secret.
+	 * @param {string|null} [options.auth2fa=null] - Two-factor authentication code.
+	 * @returns {Promise<boolean|string>} - True if login is successful, false or 2FA code if login fails.
+	 */
   async login ({
     username = null,
     password = null,
@@ -220,8 +220,8 @@ const actionsObj = {
   },
 
   /**
-   * Clears the user session.
-   */
+	 * Clears the user session.
+	 */
   async logout () {
     console.log('DLT::logout() - Clearing user session...')
     this.isInitialized = false
@@ -247,9 +247,9 @@ const actionsObj = {
   },
 
   /**
-   * Retrieves an authorization token from the ledger.
-   * @param {string|null} [newSecret=null] - New user secret.
-   */
+	 * Retrieves an authorization token from the ledger.
+	 * @param {string|null} [newSecret=null] - New user secret.
+	 */
   async authorize (newSecret = null) {
     console.log('DLT::authorize() - Starting authorization process...')
 
@@ -302,9 +302,9 @@ const actionsObj = {
   },
 
   /**
-   * Retrieves the latest metadata from the ledger and updates the local state.
-   * @returns {Promise<boolean>} - True if update is successful, false otherwise.
-   */
+	 * Retrieves the latest metadata from the ledger and updates the local state.
+	 * @returns {Promise<boolean>} - True if update is successful, false otherwise.
+	 */
   async update () {
     console.log('DLT::update() - Beginning remote update...')
 
@@ -337,15 +337,15 @@ const actionsObj = {
   },
 
   /**
-   * Registers a new user.
-   * @param {Object} options - Registration options.
-   * @param {string|null} [options.username=null] - Username.
-   * @param {string|null} [options.password=null] - Password.
-   * @param {string|null} [options.secret=null] - User secret.
-   * @param {string|null} [options.publicName=null] - Public name.
-   * @param {boolean|null} [options.auth2fa=null] - Two-factor authentication enabled.
-   * @returns {Promise<boolean|string>} - True if registration is successful, false or 2FA code if registration fails.
-   */
+	 * Registers a new user.
+	 * @param {Object} options - Registration options.
+	 * @param {string|null} [options.username=null] - Username.
+	 * @param {string|null} [options.password=null] - Password.
+	 * @param {string|null} [options.secret=null] - User secret.
+	 * @param {string|null} [options.publicName=null] - Public name.
+	 * @param {boolean|null} [options.auth2fa=null] - Two-factor authentication enabled.
+	 * @returns {Promise<boolean|string>} - True if registration is successful, false or 2FA code if registration fails.
+	 */
   async register ({
     username = null,
     password = null,
@@ -414,10 +414,10 @@ const actionsObj = {
   },
 
   /**
-	 * Update user's profile.
-	 * @param {Object} updateInfo - Updated properties options.
-	 * @returns {Promise<boolean>} - True if the update is successful, false otherwise.
-	 */
+	   * Update user's profile.
+	   * @param {Object} updateInfo - Updated properties options.
+	   * @returns {Promise<boolean>} - True if the update is successful, false otherwise.
+	   */
   async updateProfile (updateInfo) {
     console.log('DLT::updateProfile() - Starting profile update...')
 
@@ -472,12 +472,12 @@ const actionsObj = {
   },
 
   /**
- * Generic method to save the given list (tasks or diary) to the database and ledger.
- * @param {Array} list - The list to be saved (tasks or diary).
- * @param {string} listKey - The key under which the list is stored in the database.
- * @param {string} metaDataKey - The key under which the list is stored in the ledger metadata.
- * @returns {Promise<boolean>} - True if the list is updated successfully, false otherwise.
- */
+   * Generic method to save the given list (tasks or diary) to the database and ledger.
+   * @param {Array} list - The list to be saved (tasks or diary).
+   * @param {string} listKey - The key under which the list is stored in the database.
+   * @param {string} metaDataKey - The key under which the list is stored in the ledger metadata.
+   * @returns {Promise<boolean>} - True if the list is updated successfully, false otherwise.
+   */
   async saveListToLedger (list, listKey, metaDataKey) {
     try {
       const jsonArray = JSON.stringify(list)
@@ -512,12 +512,12 @@ const actionsObj = {
   },
 
   /**
- * Adds an item to the specified list and updates the ledger.
- * @param {Array} list - The list to add the item to (tasks or diary).
- * @param {Object} item - The item to add to the list.
- * @param {Function} saveMethod - The method to save the list to the ledger.
- * @returns {Promise<boolean>} - True if the item is added successfully, false otherwise.
- */
+   * Adds an item to the specified list and updates the ledger.
+   * @param {Array} list - The list to add the item to (tasks or diary).
+   * @param {Object} item - The item to add to the list.
+   * @param {Function} saveMethod - The method to save the list to the ledger.
+   * @returns {Promise<boolean>} - True if the item is added successfully, false otherwise.
+   */
   async addItemToList (list, item, saveMethod) {
     try {
       list.push(item)
@@ -529,12 +529,12 @@ const actionsObj = {
   },
 
   /**
- * Deletes an item from the specified list and updates the ledger.
- * @param {Array} list - The list to delete the item from (tasks or diary).
- * @param {Number} index - The index of the item to delete.
- * @param {Function} saveMethod - The method to save the list to the ledger.
- * @returns {Promise<boolean>} - True if the item is deleted successfully, false otherwise.
- */
+   * Deletes an item from the specified list and updates the ledger.
+   * @param {Array} list - The list to delete the item from (tasks or diary).
+   * @param {Number} index - The index of the item to delete.
+   * @param {Function} saveMethod - The method to save the list to the ledger.
+   * @returns {Promise<boolean>} - True if the item is deleted successfully, false otherwise.
+   */
   async deleteItemFromList (list, index, saveMethod) {
     try {
       list.splice(index, 1)
@@ -552,19 +552,19 @@ const actionsObj = {
   },
 
   /**
-	 * Adds a task to the tasksList.
-	 * @param {Object} task - The task to add.
-	 * @returns {Promise<boolean>} - True if the task is added successfully, false otherwise.
-	 */
+	   * Adds a task to the tasksList.
+	   * @param {Object} task - The task to add.
+	   * @returns {Promise<boolean>} - True if the task is added successfully, false otherwise.
+	   */
   async addTask (task) {
     return this.addItemToList(this.tasksList, task, this.taskMethod)
   },
 
   /**
-	 * Deletes a task from the tasksList.
-	 * @param {Number} taskIndex - The index of the task to delete.
-	 * @returns {Promise<boolean>} - True if the task is deleted successfully, false otherwise.
-	 */
+	   * Deletes a task from the tasksList.
+	   * @param {Number} taskIndex - The index of the task to delete.
+	   * @returns {Promise<boolean>} - True if the task is deleted successfully, false otherwise.
+	   */
   async deleteTask (taskIndex) {
     return this.deleteItemFromList(this.tasksList, taskIndex, this.taskMethod)
   },
@@ -576,70 +576,28 @@ const actionsObj = {
   },
 
   /**
-	 * Adds a diary to the diaryList.
-	 * @param {Object} diary - The diary to add.
-	 * @returns {Promise<boolean>} - True if the diary is added successfully, false otherwise.
-	 */
+	   * Adds a diary to the diaryList.
+	   * @param {Object} diary - The diary to add.
+	   * @returns {Promise<boolean>} - True if the diary is added successfully, false otherwise.
+	   */
   async addDiaryTask (diary) {
     return this.addItemToList(this.diaryList, diary, this.diaryMethod)
   },
 
   /**
-	 * Deletes a diary from the diaryList.
-	 * @param {Number} diaryIndex - The index of the diary to delete.
-	 * @returns {Promise<boolean>} - True if the diary is deleted successfully, false otherwise.
-	 */
+	   * Deletes a diary from the diaryList.
+	   * @param {Number} diaryIndex - The index of the diary to delete.
+	   * @returns {Promise<boolean>} - True if the diary is deleted successfully, false otherwise.
+	   */
   async deleteDiaryTask (diaryIndex) {
     return this.deleteItemFromList(this.diaryList, diaryIndex, this.diaryMethod)
   },
 
-  //   Reusable code for the methods with diary
-  async diaryMethod () {
-    try {
-      const diaryListKey = `diaryList_${this.username}`
-      const jsonArray = JSON.stringify(this.diaryList)
-      await setDataPromise(db, diaryListKey, jsonArray)
-    } catch (error) {
-      console.error('DLT::diaryMethod - Error:', error)
-      return false
-    }
-  },
-
   /**
-	 * Adds a task to the diaryList.
-	 * @param {Object} task - The task to add.
-	 * @returns {Promise<boolean>} - True if the task is added successfully, false otherwise.
+	 * Sets a timer for requesting an auth token.
+	 * @param {Object} options - Auth token options.
+	 * @param {number} options.time - Time in milliseconds.
 	 */
-  async addDiaryTask (task) {
-    try {
-      this.diaryList.push(task)
-      return await this.diaryMethod()
-    } catch (error) {
-      console.error('DLT::addDiaryTask - Error:', error)
-      return false
-    }
-  },
-
-  /**
-	 * Adds a task to the diaryList.
-	 * @param {Number} taskIndex - The index of the task to delete.
-	 * @returns {Promise<boolean>} - True if the task is deleted successfully, false otherwise.
-	 */
-  async deleteDiaryTask (taskIndex) {
-    try {
-      this.diaryList = this.diaryList.filter((_, index) => index !== taskIndex)
-      return await this.diaryMethod()
-    } catch (error) {
-      console.error('DLT::deleteTask - Error:', error)
-      return false
-    }
-  },
-
-  /**
-   * Sets a timer for requesting an auth token.
-   * @param {Object} options - Auth token options.
-   * @param {number} options.time - Time in milliseconds.
-   */
   setAuthTimeout ({ time }) {
     setTimeout(async () => {
       await this.authorize(this.client.hasSecret() ? this.client.getSecret() : null)
@@ -647,8 +605,8 @@ const actionsObj = {
   },
 
   /**
-   * Resets the auth token timer.
-   */
+	 * Resets the auth token timer.
+	 */
   resetAuthTimeout () {
     if (this.authTimeout) {
       clearTimeout(this.authTimeout)
@@ -657,12 +615,12 @@ const actionsObj = {
   },
 
   /**
-   * Hashes a string with a salt.
-   * @param {string} data - String to hash.
-   * @param {number} [length=64] - Length of the hash.
-   * @param {boolean} [salted=true] - Whether to salt the hash.
-   * @returns {string} - Hashed string.
-   */
+	 * Hashes a string with a salt.
+	 * @param {string} data - String to hash.
+	 * @param {number} [length=64] - Length of the hash.
+	 * @param {boolean} [salted=true] - Whether to salt the hash.
+	 * @returns {string} - Hashed string.
+	 */
   hash (data, length = 64, salted = true) {
     if (salted && !KNISHIO_SETTINGS.salt) {
       throw new BaseException('DLT::hash() - Salt is required for secure hashing!')
@@ -672,10 +630,10 @@ const actionsObj = {
   },
 
   /**
-   * Checks if a username is unique in the ledger.
-   * @param {string} username - Username to check.
-   * @returns {Promise<boolean>} - True if the username is unique, false otherwise.
-   */
+	 * Checks if a username is unique in the ledger.
+	 * @param {string} username - Username to check.
+	 * @returns {Promise<boolean>} - True if the username is unique, false otherwise.
+	 */
   async isUsernameUnique (username) {
     const usernameHash = this.hash(username)
     const result = await this.client.queryMeta({
@@ -694,10 +652,10 @@ const actionsObj = {
   },
 
   /**
-   * Tests the availability of endpoint URIs.
-   * @param {object} uris - Array of endpoint URIs to test.
-   * @returns {Promise<Object>} - Object containing the valid server URIs.
-   */
+	 * Tests the availability of endpoint URIs.
+	 * @param {object} uris - Array of endpoint URIs to test.
+	 * @returns {Promise<Object>} - Object containing the valid server URIs.
+	 */
   async testEndpointUris (uris) {
     const validServers = {}
     for (const uriKey of Object.keys(uris)) {
@@ -722,9 +680,9 @@ const actionsObj = {
 
 const gettersObj = {
   /**
-   * Checks if the current user is an authorized admin.
-   * @returns {boolean} - True if the user is an authorized admin, false otherwise.
-   */
+	 * Checks if the current user is an authorized admin.
+	 * @returns {boolean} - True if the user is an authorized admin, false otherwise.
+	 */
   userIsAuthorized () {
     const admins = Array.isArray(KNISHIO_SETTINGS.admins)
       ? KNISHIO_SETTINGS.admins
@@ -733,9 +691,9 @@ const gettersObj = {
   },
 
   /**
-   * Returns a truncated version of the user's wallet bundle.
-   * @returns {string} - Truncated wallet bundle.
-   */
+	 * Returns a truncated version of the user's wallet bundle.
+	 * @returns {string} - Truncated wallet bundle.
+	 */
   shortBundle () {
     return this.bundle
       ? this.bundle.slice(this.bundle.length - 4).toUpperCase()
@@ -743,9 +701,9 @@ const gettersObj = {
   },
 
   /**
-   * Returns the default encryption wallet for the app.
-   * @returns {Wallet} - Default encryption wallet.
-   */
+	 * Returns the default encryption wallet for the app.
+	 * @returns {Wallet} - Default encryption wallet.
+	 */
   encryptionWallet () {
     return new Wallet({
       secret: this.secret,
