@@ -6,7 +6,7 @@
             <q-btn
               v-if="isDeleteBtn"
               type="button"
-              :label="loading ? '...loading' : deleteBtn"
+              :label="deleteBtn"
               size="0.9375rem"
               padding="2.5px 10px"
               class="q-ml-sm"
