@@ -1,7 +1,7 @@
 <template>
 	<q-page class="column items-center">
 		<section class="q-py-xxl column items-center">
-			<greeting-titles :isMainTitle="true" secondaryTitle="Feel free to use your own Task Manager😘" />
+			<greeting-titles secondaryTitle="Feel free to use your own Task Manager😘" />
 			<FormComp
 			:formClasses="'flex items-center gap-2 q-pb-md'"
 			:formError="todoError"
