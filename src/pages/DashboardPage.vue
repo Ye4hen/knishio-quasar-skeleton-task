@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center">
-    <greeting-titles :isMainTitle="true" secondaryTitle="Your dashboard will ready soon ;)" />
+    <greeting-titles secondaryTitle="Your dashboard will ready soon ;)" />
   </q-page>
 </template>
 
