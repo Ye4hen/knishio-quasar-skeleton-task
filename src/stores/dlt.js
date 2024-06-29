@@ -43,6 +43,7 @@ const stateObj = {
   parentApp: null,
   favoriteCards: {},
   auth2fa: null,
+  favCountry: null,
   tasksList: [],
   diaryList: []
 }
@@ -111,6 +112,15 @@ const actionsObj = {
       diaryList = []
     }
     this.diaryList = diaryList
+
+    const favCountryKey = `favCountry_${username}`
+    let favCountry = await getDataPromise(db, favCountryKey)
+    if (favCountry) {
+      favCountry = JSON.parse(favCountry)
+    } else {
+      favCountry = null
+    }
+    this.favCountry = favCountry
 
     if (secret) {
       this.secret = secret
@@ -236,6 +246,7 @@ const actionsObj = {
     this.userRoles = true
     this.profile = {}
     this.auth2fa = null
+    this.favCountry = null
     this.tasksList = []
     this.diaryList = []
 
@@ -591,6 +602,135 @@ const actionsObj = {
 	   */
   async deleteDiaryTask (diaryIndex) {
     return this.deleteItemFromList(this.diaryList, diaryIndex, this.diaryMethod)
+  },
+
+  /**
+	   * Loads countries from the API.
+	   * @param {String} selectedContinent - The selected continent which will be loaded
+	   * @returns {Promise<Array>} - Returns array with countries
+	   */
+  async loadCountries (selectedContinent) {
+    try {
+      const url = 'https://countries.trevorblades.com/'
+      const query = `
+      query getCountries {
+        countries {
+		code
+          capital
+          name
+          continent {
+            name
+          }
+        }
+      }
+    `
+
+      const response = await this.makeRequest(url, query)
+
+      if (response && response.data && response.data.countries) {
+        const countries = response.data.countries
+
+        const filteredCountries = countries.filter(country =>
+          country.continent.name === selectedContinent
+        )
+
+        console.log(filteredCountries)
+        return filteredCountries
+      } else {
+        console.error('Failed to fetch countries data.')
+        return []
+      }
+    } catch (error) {
+      console.error('Error fetching countries:', error)
+      return []
+    }
+  },
+
+  /**
+	 * Gets all continents from the API.
+	 * @returns {Promise<Array>} - Returns an array of continents, which might be empty if an error occurs
+	 */
+  async getAllContinents () {
+    try {
+      const url = 'https://countries.trevorblades.com/'
+      const query = `
+      query getContinents {
+      continents {
+      name
+  }
+}
+    `
+      const response = await this.makeRequest(url, query)
+      console.log(response.data?.continents)
+      return response.data?.continents
+    } catch (error) {
+      console.error('Error fetching countries:', error)
+      return []
+    }
+  },
+
+  /**
+	   * Makes request from the API.
+	   * @param {String} url - The api url
+	   * @param {String} query - The query data
+	   *  @returns {Promise<Object|null>} - Returns the response object or null if the request fails
+	   */
+  async makeRequest (url, query) {
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      })
+      return await response.json()
+    } catch (error) {
+      console.error('Request failed:', error)
+      return null
+    }
+  },
+
+  /**
+   * Adds a favorite country to the user's profile.
+   * @param {string} country - The country code to add as a favorite.
+   * @returns {Promise<boolean>} - True if the country  is added successfully, false otherwise.
+   */
+  async addFavoriteCountry (country) {
+    console.log(`DLT::addFavoriteCountry() - Adding ${country} to favorite countries...`)
+
+    if (!this.client) {
+      console.error('DLT::addFavoriteCountry() - No Knish.IO client available!')
+      return
+    }
+
+    this.favCountry = country
+    const username = await getDataPromise(db, 'username')
+    const favCountryKey = `favCountry_${username}`
+    const userFavCountry = JSON.stringify(this.favCountry)
+    await setDataPromise(db, favCountryKey, userFavCountry)
+
+    const publicName = this.profile.publicName
+    const avatar = this.profile.avatar
+
+    const saveParams = {
+      metaData: {
+        publicName,
+        avatar,
+        favCountryKey: userFavCountry,
+        appSlug: KNISHIO_SETTINGS.cellSlug
+      },
+      metaId: this.bundle
+    }
+
+    const bundle = new WalletBundle({})
+    const response = await bundle.save(this.client, saveParams)
+    if (response.error < 1) {
+      console.log('DLT::addFavoriteCountry() - Favorite country added successfully.')
+      return true
+    } else {
+      console.error(`DLT::addFavoriteCountry - Error updating ${this.favCountry}`)
+      console.error(response.error_message)
+      return false
+    }
   },
 
   /**
