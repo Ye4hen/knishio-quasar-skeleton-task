@@ -33,6 +33,14 @@
 			>
 				Task manager
 			</q-item>
+      <q-item
+			tag="a"
+			clickable
+			href="/countries"
+			class="items-center"
+			>
+				Countries
+			</q-item>
             <q-btn
               flat
               round
